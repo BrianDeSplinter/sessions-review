@@ -1,14 +1,24 @@
 require('dotenv').config()
 const express = require('express')
-const app = express()
 const massive = require('massive')
-const { SERVER_PORT, CONNECTION_STRING } = process.env
+const session = require('express-session')
+const app = express()
 const setup = require('./controllers/setup')
 const authCtrl = require('./controllers/authController')
 const carCtrl = require('./controllers/carController')
 const movieCtrl = require('./controllers/moviesController')
+const { SERVER_PORT, CONNECTION_STRING, SESSION_SECRET } = process.env
 
 app.use(express.json())
+app.use(
+    session({
+        resave: false,
+        saveUninitialized: true,
+        secret: SESSION_SECRET,
+        cookie: {maxAge: 1000 * 60 * 60 * 24 * 31}
+    })
+)
+
 
 /**
  * ! MASSIVE AND QUERIES TODOS

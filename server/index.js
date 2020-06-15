@@ -7,7 +7,9 @@ const setup = require('./controllers/setup')
 const authCtrl = require('./controllers/authController')
 const carCtrl = require('./controllers/carController')
 const movieCtrl = require('./controllers/moviesController')
-const { SERVER_PORT, CONNECTION_STRING, SESSION_SECRET } = process.env
+const authMiddleware = require('./middlewares/authMiddleware')
+const{USER, ADMIN} = require('../Constants/ROLES')
+const {SERVER_PORT, CONNECTION_STRING, SESSION_SECRET} = process.env
 
 app.use(express.json())
 app.use(
@@ -43,11 +45,11 @@ app.use(
  */
 
 //* Movie Endpoints
-app.get('/api/movies', movieCtrl.getAllMovies)
-app.get('/api/movies/:id', movieCtrl.getMovieById)
-app.post('/api/movies', movieCtrl.addMovie)
-app.delete('/api/movies/:id', movieCtrl.deleteMovie)
-
+app.get('/api/movies', authMiddleware([USER, ADMIN]), movieCtrl.getAllMovies)
+app.get('/api/movies/:id', authMiddleware([USER, ADMIN]), movieCtrl.getMovieById)
+app.post('/api/movies', authMiddleware([ADMIN]), movieCtrl.addMovie)
+app.delete('/api/movies/:id', authMiddleware([ADMIN]), movieCtrl.deleteMovie)
+ 
 //* Car endpoints
 
 app.get('/api/cars', carCtrl.getAllCars)
